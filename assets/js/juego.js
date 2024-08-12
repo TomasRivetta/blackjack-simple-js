@@ -12,6 +12,18 @@ const tipos = ['C', 'D', 'H', 'S']
 
 const especiales = ['A', 'J', 'Q', 'K']
 
+let puntosJugador = 0, puntosComputadora = 0
+
+
+// Referencias del HTML
+
+const btnPedir = document.querySelector('#btnPedir')
+
+const divCartasJugador = document.querySelector('#jugador-cartas')
+
+const puntosHTML = document.querySelectorAll('small')
+
+
 // Esta funcion crea un mazo
 const crearDeck = () => {
 
@@ -48,6 +60,7 @@ const pedirCarta = () => {
 
     let carta = deck.pop()
 
+    return carta
 
 }
 
@@ -69,3 +82,34 @@ const valorCarta = (carta) => {
         (valor === 'A') ? 11 : 10
         : valor * 1
 }
+
+// Eventos
+btnPedir.addEventListener('click', () => {
+
+    const carta = pedirCarta()
+
+    puntosJugador += valorCarta(carta)
+
+    puntosHTML[0].innerText = puntosJugador
+
+    //Creamos la carta en el front
+    const imgCarta = document.createElement('img')
+    imgCarta.src = `assets/cartas/${carta}.png`
+    imgCarta.classList.add('carta')
+
+
+    //Añadimos la carta a la mano el jugador
+    divCartasJugador.append(imgCarta)
+
+    if (puntosJugador > 21) {
+        console.warn("Perdiste");
+        btnPedir.disabled = true
+    }
+    else if (puntosJugador === 21) {
+        console.warn("21, genial");
+
+    }
+
+})
+
+crearDeck()
