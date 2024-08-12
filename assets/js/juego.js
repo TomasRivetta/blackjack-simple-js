@@ -17,9 +17,15 @@ let puntosJugador = 0, puntosComputadora = 0
 
 // Referencias del HTML
 
+const btnNuevoJuego = document.querySelector('#btnNuevo')
+
 const btnPedir = document.querySelector('#btnPedir')
 
+const btnDetener = document.querySelector('#btnDetener')
+
 const divCartasJugador = document.querySelector('#jugador-cartas')
+
+const divCartasComputadora = document.querySelector('#computadora-cartas')
 
 const puntosHTML = document.querySelectorAll('small')
 
@@ -83,7 +89,67 @@ const valorCarta = (carta) => {
         : valor * 1
 }
 
+//turno de la computadora
+const turnoComputadora = (puntosMinimos) => {
+
+    do {
+
+        const carta = pedirCarta()
+
+        puntosComputadora += valorCarta(carta)
+
+        puntosHTML[1].innerText = puntosComputadora
+
+        //Creamos la carta en el front
+        const imgCarta = document.createElement('img')
+        imgCarta.src = `assets/cartas/${carta}.png`
+        imgCarta.classList.add('carta')
+
+        divCartasComputadora.append(imgCarta)
+
+        if (puntosMinimos > 21) {
+            break
+        }
+
+    } while ((puntosComputadora < puntosMinimos) && puntosMinimos <= 21);
+
+
+    setTimeout(() => {
+
+        if (puntosComputadora === puntosMinimos) {
+            alert('Empate');
+        } else if (puntosMinimos > 21) {
+            alert('Gano la computadora');
+        } else if (puntosComputadora > 21) {
+            alert('Gano el jugador');
+        } else {
+            console.log('computadora gana');
+
+        }
+
+    }, 12);
+
+}
+
 // Eventos
+
+btnNuevoJuego.addEventListener('click', () => {
+
+    deck = [];
+    deck = crearDeck()
+
+    puntosJugador = 0
+    puntosComputadora = 0
+    puntosHTML[0].innerText = 0
+    puntosHTML[1].innerText = 0
+
+    divCartasJugador.innerHTML = ''
+    divCartasComputadora.innerHTML = ''
+
+
+})
+
+
 btnPedir.addEventListener('click', () => {
 
     const carta = pedirCarta()
@@ -104,12 +170,25 @@ btnPedir.addEventListener('click', () => {
     if (puntosJugador > 21) {
         console.warn("Perdiste");
         btnPedir.disabled = true
+        btnDetener.disabled = true
+
+        turnoComputadora(puntosJugador)
     }
     else if (puntosJugador === 21) {
         console.warn("21, genial");
-
+        btnPedir.disabled = true
+        btnDetener.disabled = true
+        turnoComputadora(puntosJugador)
     }
 
 })
+
+btnDetener.addEventListener('click', () => {
+    btnPedir.disabled = true
+    btnDetener.disabled = true
+
+    turnoComputadora(puntosJugador)
+})
+
 
 crearDeck()
